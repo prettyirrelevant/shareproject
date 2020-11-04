@@ -1,0 +1,246 @@
+{% extends 'layout.html' %}
+{% block head %}
+    <title>{{ title }} | ShareProject</title>
+{% endblock %}
+
+{% block body %}
+{% if current_user.is_authenticated and current_user.username == user.username %}
+    <section class="section" style="padding-top: 30px;">
+        <div class="container ">
+            <div class="box">
+                <article class="media">
+                    <div class="media-left">
+                        <figure class="image is-128x128" >
+                            <img src="{{ image_url }}" class="is-rounded" alt="Image">
+                        </figure>
+                    </div>
+                    <div class="media-content">
+                        <div class="content has-text-right">
+                            <form action="{{ url_for('user.profile', username=user.username) }}" method="post" enctype="multipart/form-data">
+                                {{ form.csrf_token }}
+                                <div class="field">
+                                <p class="control has-icons-left">
+                                    {{ form.username(class_='input', readonly='readonly') }}
+                                    <span class="icon is-small is-left">
+                                        <i class="fas fa-user"></i>
+                                    </span>
+                                </p>
+                            </div>
+                                <div class="field">
+                                {% if form.email.errors %}
+                                    <div class="control has-icons-left">
+                                        {{ form.email(class_='input is-danger') }}
+                                        <span class="icon is-small is-left">
+                                            <i class="fas fa-envelope"></i>
+                                        </span>
+                                    </div>
+                                    {% for error in form.email.errors %}
+                                        <p class="help is-danger">{{ error }}</p>
+                                    {% endfor %}
+                                {% else %}
+                                    <div class="control has-icons-left">
+                                        {{ form.email(class_='input') }}
+                                        <span class="icon is-small is-left">
+                                            <i class="fas fa-envelope"></i>
+                                        </span>
+                                    </div>
+                                {% endif %}
+                            </div>
+                                <div class="field">
+                                {% if form.picture_upload.errors %}
+                                    <div class="file has-name is-link is-fullwidth" id="file-upload">
+                                        <label class="file-label">
+                                            {{ form.picture_upload(class_='file-input is-danger') }}
+                                            <span class="file-cta">
+                                                <span class="file-icon">
+                                                <i class="fas fa-upload"></i>
+                                                </span>
+                                                <span class="file-label">
+                                                {{ form.picture_upload.label}}
+                                                </span>
+                                            </span>
+                                            <span class="file-name">
+                                                {{ user.profile_path }}
+                                            </span>
+                                        </label>
+                                    </div>
+                                    {% for error in form.picture_upload.errors %}
+                                        <p class="help is-danger"><strong>{{ error }}</strong></p>
+                                    {% endfor %}
+                                {% else %}
+                                    <div class="file has-name is-link is-fullwidth" id="file-upload">
+                                        <label class="file-label">
+                                            {{ form.picture_upload(class_='file-input is-danger') }}
+                                            <span class="file-cta">
+                                                <span class="file-icon">
+                                                <i class="fas fa-upload"></i>
+                                                </span>
+                                                <span class="file-label">
+                                                {{ form.picture_upload.label}}
+                                                </span>
+                                            </span>
+                                            <span class="file-name">
+                                                {{ user.profile_path }}
+                                            </span>
+                                        </label>
+                                    </div>
+                                    <p class="help"><strong>Only picture formats are allowed</strong></p>
+                                {% endif %}
+                            </div>
+                                <button class="button is-fullwidth is-rounded is-link">Update Profile</button>
+                            </form>
+                        </div>
+                    </div>
+                </article>
+            </div>
+        </div>
+    </section>
+    <section class="section" style="padding-bottom: 5px; padding-top: 10px">
+        <div class="container">
+            <h6 class="subtitle" style="padding-bottom: 10px; margin-bottom: 10px">
+                Projects ({{ user.projects|length }})
+            </h6>
+            <hr class="navbar-divider">
+        </div>
+    </section>
+    <section class="section" style="padding-top: 5px">
+        <div class="container">
+            <div class="columns">
+            {% for project in projects.items %}
+                <div class="column">
+                    <div class="card">
+                        <header class="card-header">
+                            <p class="card-header-title">{{ project.name }}</p>
+                            <div class="card-header-icon" aria-label="more options">
+                                {{project.project_liked.count()}} &nbsp;
+                                <i class="fas fa-heart" aria-hidden="true"></i>
+                            </div>
+                        </header>
+                        <div class="card-content">
+                            <div class="content">
+                                {% if project.description|length < 60 %}
+                                    {{ project.description }}<br>
+                                {% else %}
+                                    {{ project.description[:60] }}...<br>
+                                {% endif %}
+                                <time datetime="2016-1-1">Added {{ project.created.strftime('%d-%m-%Y') }}</time>
+                            </div>
+                        </div>
+                        <footer class="card-footer">
+                            <a href="{{ url_for('project.view_project', proj_path=project.slug) }}" class="card-footer-item">Open</a>
+                            <a class="card-footer-item has-text-danger" href="{{ url_for('project.delete_project', proj_path=project.slug) }}">Delete</a>
+                            {% if current_user.is_authenticated %}
+                                {% if project.already_liked(current_user) %}
+                                <a class="card-footer-item has-text-warning" href="{{url_for('project.unlike', project_slug=project.slug)}}">Unlike</a>
+                                {% else %}
+                                    <a class="card-footer-item has-text-warning" href="{{url_for('project.like', project_slug=project.slug)}}">Like</a>
+                                {% endif %}
+                            {% else %}
+                                <a class="card-footer-item has-text-warning" href="{{url_for('project.like', project_slug=project.slug)}}">Like</a>
+                            {% endif %}
+                        </footer>
+                     </div>
+                </div>
+            {% endfor %}
+        </div>
+            <nav class="pagination is-rounded is-centered" role="navigation" aria-label="pagination">
+                    <ul class="pagination-list">
+                        {% for page_num in projects.iter_pages(left_edge=1, right_edge=1, left_current=1, right_current=2) %}
+                            {% if page_num %}
+                                {% if projects.page == page_num %}
+                            <li><a class="pagination-link is-current"  href="{{ url_for('user.profile', username=user.username, page=page_num) }}" aria-label="{{ page_num }}" aria-current="page">{{ page_num }}</a></li>
+                                {% else %}
+                                    <li><a class="pagination-link"  href="{{ url_for('user.profile',username=user.username, page=page_num) }}" aria-label="{{ page_num }}" aria-current="page">{{ page_num }}</a></li>
+                                {% endif %}
+                            {% else %}
+                                <li><span class="pagination-ellipsis">&hellip;</span></li>
+                            {% endif %}
+                        {% endfor %}
+                    </ul>
+                </nav>
+        </div>
+    </section>
+{% else %}
+    <section class="section" style="padding-top: 30px;">
+        <div class="container ">
+            <div class="box">
+                <article class="media">
+                    <div class="media-left">
+                        <figure class="image is-128x128">
+                            <img src="{{ image_url }}" class="is-rounded" alt="Image">
+                        </figure>
+                    </div>
+                    <div class="media-content">
+                        <div class="content has-text-right">
+                            <p class=" title"> {{ user.username }}</p>
+                            <p class="subtitle">{{ user.email }}</p>
+                            <p class="subtitle">Joined {{ user.joined.strftime('%d-%m-%Y') }}</p>
+                        </div>
+                    </div>
+                </article>
+            </div>
+        </div>
+    </section>
+    <section class="section" style="padding-bottom: 5px; padding-top: 10px">
+        <div class="container">
+            <h6 class="subtitle" style="padding-bottom: 10px; margin-bottom: 10px">Projects ({{ user.projects|length }})</h6><hr class="navbar-divider">
+        </div>
+    </section>
+    <section class="section" style="padding-top: 5px">
+        <div class="container">
+            <div class="columns">
+            {% for project in projects.items %}
+                <div class="column">
+                    <div class="card">
+                        <header class="card-header">
+                            <p class="card-header-title">{{ project.name }}</p>
+                            <div class="card-header-icon" aria-label="more options">
+                                {{project.project_liked.count()}} &nbsp;
+                                <i class="fas fa-heart" aria-hidden="true"></i>
+                            </div>
+                        </header>
+                        <div class="card-content">
+                            <div class="content">
+                                {% if project.description|length < 60 %}
+                                    {{ project.description }}<br>
+                                {% else %}
+                                    {{ project.description[:60] }}...<br>
+                                {% endif %}
+                                <time datetime="2016-1-1">Added {{ project.created.strftime('%d-%m-%Y') }}</time>
+                            </div>
+                        </div>
+                        <footer class="card-footer">
+                            <a href="{{ url_for('project.view_project', proj_path=project.slug) }}" class="card-footer-item">Open</a>
+                            {% if current_user.is_authenticated %}
+                                {% if project.already_liked(current_user) %}
+                                    <a class="card-footer-item has-text-warning" href="{{url_for('project.unlike', project_slug=project.slug)}}">Unlike</a>
+                                {% else %}
+                                    <a class="card-footer-item has-text-warning" href="{{url_for('project.like', project_slug=project.slug)}}">Like</a>
+                                {% endif %}
+                            {% else %}
+                                <a class="card-footer-item has-text-warning" href="{{url_for('project.like', project_slug=project.slug)}}">Like</a>
+                            {% endif %}
+                        </footer>
+                     </div>
+                </div>
+            {% endfor %}
+        </div>
+            <nav class="pagination is-rounded is-centered" role="navigation" aria-label="pagination">
+                    <ul class="pagination-list">
+                        {% for page_num in projects.iter_pages(left_edge=1, right_edge=1, left_current=1, right_current=2) %}
+                            {% if page_num %}
+                                {% if projects.page == page_num %}
+                            <li><a class="pagination-link is-current"  href="{{ url_for('user.profile', username=user.username, page=page_num) }}" aria-label="{{ page_num }}" aria-current="page">{{ page_num }}</a></li>
+                                {% else %}
+                                    <li><a class="pagination-link"  href="{{ url_for('user.profile',username=user.username, page=page_num) }}" aria-label="{{ page_num }}" aria-current="page">{{ page_num }}</a></li>
+                                {% endif %}
+                            {% else %}
+                                <li><span class="pagination-ellipsis">&hellip;</span></li>
+                            {% endif %}
+                        {% endfor %}
+                    </ul>
+                </nav>
+        </div>
+    </section>
+{% endif %}
+{% endblock %}

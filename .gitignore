@@ -1,0 +1,6 @@
+migrations/
+venv/
+**/__pycache__/**
+.env
+projects/
+.vscode/

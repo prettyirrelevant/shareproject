@@ -1,0 +1,92 @@
+{% extends 'layout.html' %}
+{% block head %}
+    <title>{{ title }}|shareProject</title>
+{% endblock %}
+{% block body %}
+    <section class="section">
+        <div class="container">
+            <h1 class="title">Hello.</h1>
+            <p class="subtitle">
+                Just a little project where individuals can showcase their projects without the knowledge of Git.<br>
+                I hope you find it useful. Enjoy!
+            </p>
+            <p><a href="{{ url_for('project.add') }}" class="button is-success is-outlined" >Add Project</a></p>
+        </div>
+    </section>
+    <section class="section" style="padding-top: 10px; padding-bottom: 2px">
+        <div class="container">
+            <h2 class="title">Recently Added Projects</h2>
+            <hr class="divider">
+        </div>
+    </section>
+    {% if projects.items|length < 1 %}
+        <section class="section" style="padding-top: 2px">
+            <div class="container">
+                <h1 class="title" style="text-align: center">
+                    No uploaded project at the moment!<br>
+                    <a href="{{ url_for('project.add') }}" class="button is-success is-outlined is-large" style="margin-top: 10px">Add Project</a>
+                </h1>
+            </div>
+        </section>
+    {% else %}
+        <section class="section" style="padding-top: 2px">
+            <div class="container">
+                <div class="columns">
+                    {% for project in projects.items %}
+                        <div class="column">
+                            <div class="card">
+                                <header class="card-header">
+                                    <p class="card-header-title">
+                                        {{ project.name }}
+                                    </p>
+                                    <div class="card-header-icon" aria-label="more options">
+                                        {{project.project_liked.count()}} &nbsp;
+                                        <i class="fas fa-heart" aria-hidden="true"></i>
+                                    </div>
+                                </header>
+                                <div class="card-content">
+                                    <div class="content">
+                                        {% if project.description|length < 60 %}
+                                            {{ project.description }}<br>
+                                        {% else %}
+                                            {{ project.description[:60] }}...<br>
+                                        {% endif %}
+                                        <time datetime="2016-1-1">Added {{ project.created.strftime('%d-%m-%Y') }}</time>
+                                    </div>
+                                    <p class="subtitle">-By <a href="{{ url_for('user.profile', username=project.author.username ) }}">{{ project.author.username }}</a></p>
+                                </div>
+                                <footer class="card-footer">
+                                    <a href="{{ url_for('project.view_project', proj_path=project.slug) }}" class="card-footer-item">Open</a>
+                                    {% if current_user.is_authenticated %}
+                                        {% if project.already_liked(current_user) %}
+                                            <a class="card-footer-item has-text-warning" href="{{url_for('project.unlike', project_slug=project.slug)}}">Unlike</a>
+                                        {% else %}
+                                            <a class="card-footer-item has-text-warning" href="{{url_for('project.like', project_slug=project.slug)}}">Like</a>
+                                        {% endif %}
+                                    {% else %}
+                                        <a class="card-footer-item has-text-warning" href="{{url_for('project.like', project_slug=project.slug)}}">Like</a>
+                                    {% endif %}
+                                </footer>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+                <nav class="pagination is-rounded is-centered" role="navigation" aria-label="pagination">
+                    <ul class="pagination-list">
+                        {% for page_num in projects.iter_pages(left_edge=1, right_edge=1, left_current=1, right_current=2) %}
+                            {% if page_num %}
+                                {% if projects.page == page_num %}
+                            <li><a class="pagination-link is-current"  href="{{ url_for('main.index', page=page_num) }}" aria-label="{{ page_num }}" aria-current="page">{{ page_num }}</a></li>
+                                {% else %}
+                                    <li><a class="pagination-link"  href="{{ url_for('main.index', page=page_num) }}" aria-label="{{ page_num }}" aria-current="page">{{ page_num }}</a></li>
+                                {% endif %}
+                            {% else %}
+                                <li><span class="pagination-ellipsis">&hellip;</span></li>
+                            {% endif %}
+                        {% endfor %}
+                    </ul>
+                </nav>
+            </div>
+        </section>
+    {% endif %}
+{% endblock %}

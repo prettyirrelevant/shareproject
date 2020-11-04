@@ -1,0 +1,138 @@
+{% extends 'layout.html' %}
+{% block head %}
+<title>{{title}} | ShareProject</title>
+{% endblock %}
+{% block body %}
+    <section class="section">
+        <div class="container">
+            <div class="box">
+                {% if current_user.is_authenticated and current_user.id == project.user_id %}
+                    <form action="{{ url_for('project.view_project', proj_path=project.slug) }}" method="post">
+                        {{ form.csrf_token }}
+                        <div class="field is-horizontal">
+                            <div class="field-label is-normal">
+                                {{ form.name.label(class_='label has-text-left') }}
+                            </div>
+                            <div class="field-body">
+                                <div class="field">
+                                    <div class="control">
+                                        {{ form.name(class_='input', readonly='readonly') }}
+                                    </div>
+                                </div>
+                             </div>
+                        </div>
+                        <div class="field is-horizontal">
+                        <div class="field-label is-normal">
+                            {{ form.description.label(class_='label has-text-left') }}
+                        </div>
+                        {% if form.description.errors %}
+                            <div class="field-body">
+                                <div class="field">
+                                    <div class="control">
+                                        {{ form.description(class_='textarea') }}
+                                    </div>
+                                    {% for error in form.description.errors %}
+                                        <p class="help is-danger"><strong>{{ error }}</strong></p>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        {% else %}
+                            <div class="field-body">
+                                <div class="field">
+                                    <div class="control">
+                                        {{ form.description(class_='textarea') }}
+                                    </div>
+                                </div>
+                            </div>
+                        {% endif %}
+                    </div>
+                    <p>Likes: {{project.project_liked.count()}}</p>
+                    <p>Uploaded on: {{ project.created.strftime('%d-%m-%Y') }}</p>
+                    <button class="button is-black">Update</button>
+                    </form>
+                {% else %}
+                    <section class="section">
+                        <h2 class="title">Name: {{ project.name }}</h2>
+                        <p class="title" >Description: {{ project.description }}</p>
+                        <p class="title">
+                            Uploaded by: <em><a href="{{ url_for('user.profile', username=project.author.username) }}">{{ project.author.username }}</a></em>
+                        </p>
+                        <p class="title">Likes: {{project.project_liked.count()}}</p>
+                        <p class="title">Uploaded on: {{ project.created.strftime('%d-%m-%Y') }}</p>
+                    </section>
+                {% endif %}
+            </div>
+        </div>
+    </section>
+    <section class="section" style="padding-bottom: 10px">
+        <div class="container ">
+            <nav class="breadcrumb has-arrow-separator" aria-label="breadcrumbs">
+            <ul>
+                {% for _ in range(breadcrumbs|length) %}
+                    {%set pr = breadcrumb %}
+                    {% if breadcrumbs[_] == breadcrumbs[-1] %}
+                        <li class="is-active"><a href="{{ url_for('project.view_project', proj_path=breadcrumbs[_]) }}">{{ br[_] }}</a></li>
+                    {% else %}
+                        <li><a href="{{ url_for('project.view_project', proj_path=breadcrumbs[_]) }}">{{ br[_] }}</a></li>
+                    {% endif %}
+                {% endfor %}
+            </ul>
+            </nav>
+        </div>
+    </section>
+    <section class="section" style="padding-top: 10px">
+        <div class="container">
+            <div class="box">
+                {% if current_user.is_authenticated and current_user.id == project.user_id %}
+                    <table class="table is-fullwidth is-hoverable">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th><abbr title="Last Modified">Last Mod</abbr></th>
+                                <th>Size</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for content in contents %}
+                                <tr>
+                                    <td><a href="{{ url_for('project.view_project', proj_path=content.path) }}">{{ content.name }}</a></td>
+                                    <td class="is-2-mobile">{{ content.last_modified }}</td>
+                                    <td>{{ content.size }}</td>
+                                    <td>
+                                        <div class="field is-grouped">
+                                            <p class="control">
+                                                <a href="{{ url_for('project.delete_file_dir', proj_path=content.path) }}" class="button is-danger">
+                                                    Delete
+                                                </a>
+                                            </p>
+                                        </div>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                {% else %}
+                    <table class="table is-fullwidth is-hoverable">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th><abbr title="Last Modified">Last Mod</abbr></th>
+                                <th>Size</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for content in contents %}
+                                <tr>
+                                    <td><a href="{{ url_for('project.view_project', proj_path=content.path) }}">{{ content.name }}</a></td>
+                                    <td class="is-2-mobile">{{ content.last_modified }}</td>
+                                    <td>{{ content.size }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                {% endif %}
+            </div>
+        </div>
+    </section>
+{% endblock %}

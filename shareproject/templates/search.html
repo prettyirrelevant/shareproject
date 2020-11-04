@@ -1,0 +1,67 @@
+{% extends 'layout.html' %}
+{% block head %}
+    <title>{{ title }}|ShareProject</title>
+{% endblock %}
+{% block body %}
+    <section class="section" style="padding-bottom: 2px">
+        <div class="container">
+            <h1 class="title">Search results for: "{{ request.args.get('q') }}"</h1>
+            <h6 class="subtitle">Total result(s) found: {{ total }}</h6>
+            <hr class="divider">
+        </div>
+    </section>
+    {% if total == 0 %}
+        <section class="section" style="padding-top: 2px">
+            <div class="container">
+                <h1 class="title" style="text-align: center">No results found!</h1>
+            </div>
+        </section>
+    {% else %}
+    <section class="section" style="padding-top: 2px">
+        <div class="container">
+            <div class="columns">
+                {% for project in projects %}
+                    <div class="column">
+                        <div class="card">
+                            <header class="card-header">
+                                <p class="card-header-title">
+                                    {{ project.name }}
+                                </p>
+                                <div class="card-header-icon" aria-label="more options">
+                                    {{project.project_liked.count()}} &nbsp;
+                                    <i class="fas fa-heart" aria-hidden="true"></i>
+                                </div>
+                            </header>
+                            <div class="card-content">
+                                <div class="content">
+                                    {% if project.description|length < 60 %}
+                                        {{ project.description }}<br>
+                                    {% else %}
+                                        {{ project.description[:60] }}...<br>
+                                    {% endif %}
+                                    <time datetime="2016-1-1">Added {{ project.created.strftime('%d-%m-%Y') }}</time>
+                                </div>
+                                <p class="subtitle">-By <a>{{ project.author.username }}</a></p>
+                            </div>
+                            <footer class="card-footer">
+                                <a href="{{ url_for('project.view_project', proj_path=project.slug) }}" class="card-footer-item">Open</a>
+                                {% if current_user.is_authenticated %}
+                                    {% if project.already_liked(current_user) %}
+                                        <a class="card-footer-item has-text-warning" href="{{url_for('project.unlike', project_slug=project.slug)}}">Unlike</a>
+                                    {% else %}
+                                        <a class="card-footer-item has-text-warning" href="{{url_for('project.like', project_slug=project.slug)}}">Like</a>
+                                    {% endif %}
+                                {% else %}
+                                    <a class="card-footer-item has-text-warning" href="{{url_for('project.like', project_slug=project.slug)}}">Like</a>
+                                {% endif %}
+                            </footer>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+            <nav class="pagination is-rounded is-centered" role="navigation" aria-label="pagination">
+                <a class="pagination-previous" href="{{ prev_url or '#' }}" {% if not prev_url %} disabled {% endif %}>Previous page</a>
+                <a class="pagination-next" href="{{ next_url or '#' }}" {% if not next_url %} disabled {% endif %}>Next page</a>
+            </nav>
+    {% endif %}
+{% endblock %}

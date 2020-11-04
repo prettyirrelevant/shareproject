@@ -1,0 +1,83 @@
+{% extends 'layout.html' %}
+{% block head %}
+<title>{{title}}|ShareProject</title>
+{% endblock %}
+{% block body %}
+    <div class="container is-fluid">
+        <form class="box" action="{{ url_for('project.add') }}" method="post" enctype="multipart/form-data">
+            <h1 class="has-text-centered"><strong>ADD PROJECT - SHAREPROJECT</strong></h1>
+            {{ form.csrf_token }}
+            <div class="field">
+                {{ form.name.label }}
+                {% if form.name.errors %}
+                    <div class="control has-icons-left">
+                        {{ form.name(class_='input is-danger') }}
+                    </div>
+                    {% for error in form.name.errors %}
+                        <p class="help is-danger">{{ error }}</p>
+                    {% endfor %}
+                {% else %}
+                    <div class="control has-icons-left has-icons-right">
+                        {{ form.name(class_='input') }}
+                        <span class="icon is-small is-left">
+                            <i class="fas fa-user"></i>
+                        </span>
+                    </div>
+                {% endif %}
+            </div>
+            <div class="field">
+                {% if form.file.errors %}
+                    <div class="file has-name is-link is-fullwidth" id="file-upload">
+                        <label class="file-label">
+                            {{ form.file(class_='file-input is-danger') }}
+                            <span class="file-cta">
+                                <span class="file-icon">
+                                <i class="fas fa-upload"></i>
+                                </span>
+                                <span class="file-label">
+                                {{ form.file.label}}
+                                </span>
+                            </span>
+                            <span class="file-name">
+                            No file chosen yet.
+                            </span>
+                        </label>
+                    </div>
+                    {% for error in form.file.errors %}
+                        <p class="help is-danger">{{ error }}</p>
+                    {% endfor %}
+                {% else %}
+                    <div class="file has-name is-link is-fullwidth" id="file-upload">
+                        <label class="file-label">
+                            {{ form.file(class_='file-input is-danger') }}
+                            <span class="file-cta">
+                                <span class="file-icon">
+                                <i class="fas fa-upload"></i>
+                                </span>
+                                <span class="file-label">
+                                {{ form.file.label}}
+                                </span>
+                            </span>
+                            <span class="file-name">
+                            No file chosen yet.
+                            </span>
+                        </label>
+                    </div>
+                <p class="help">Only zip formats allowed.</p>
+                {% endif %}
+
+            </div>
+
+            <button class="button is-fullwidth is-rounded is-link">Add Project</button>
+        </form>
+    </div>
+    <script>
+        const fileInput = document.querySelector('#file-upload input[type=file]');
+        fileInput.onchange = () => {
+            if (fileInput.files.length > 0) {
+                const fileName = document.querySelector('#file-upload .file-name');
+                fileName.textContent = fileInput.files[0].name;
+            }
+        };
+    </script>
+{% endblock %}
