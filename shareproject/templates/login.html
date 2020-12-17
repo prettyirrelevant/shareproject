@@ -1,0 +1,64 @@
+{% extends 'layout.html' %} {% block head %}
+<title>{{ title }}|ShareProject</title>
+{% endblock %} {% block body %}
+<div class="container is-fluid">
+  <form class="box" action="{{ url_for('user.login') }}" method="post">
+    <h1 class="has-text-centered"><strong>LOGIN SHAREPROJECT</strong></h1>
+    {{ form.csrf_token }}
+    <div class="field">
+      {{ form.username.label }} {% if form.username.errors %}
+      <div class="control has-icons-left">
+        {{ form.username(class_='input is-danger') }}
+        <span class="icon is-small is-left">
+          <i class="fas fa-user"></i>
+        </span>
+      </div>
+      {% for error in form.username.errors %}
+      <p class="help is-danger">{{ error }}</p>
+      {% endfor %} {% else %}
+      <div class="control has-icons-left has-icons-right">
+        {{ form.username(class_='input') }}
+        <span class="icon is-small is-left">
+          <i class="fas fa-user"></i>
+        </span>
+      </div>
+      <p class="help">Username must be at least 4 characters.</p>
+      {% endif %}
+    </div>
+
+    <div class="field">
+      {{ form.password.label }} {% if form.password.errors %}
+      <div class="control has-icons-left">
+        {{ form.password(class_='input is-danger') }}
+        <span class="icon is-small is-left">
+          <i class="fas fa-lock"></i>
+        </span>
+      </div>
+      {% for error in form.password.errors %}
+      <p class="help is-danger">{{ error }}</p>
+      {% endfor %} {% else %}
+      <div class="control has-icons-left has-icons-right">
+        {{ form.password(class_='input') }}
+        <span class="icon is-small is-left">
+          <i class="fas fa-lock"></i>
+        </span>
+      </div>
+      <p class="help">Password must be at least 6 characters.</p>
+      {% endif %}
+    </div>
+    <div class="field">
+      <div class="control is-clearfix">
+        <div>
+          <button class="button is-primary is-outlined is-pulled-right">
+            Login
+          </button>
+        </div>
+        <p>
+          <span><i class="fas fa-arrow-right"></i></span> Don't have an account?
+          <a href="{{ url_for('user.register') }}">Login</a>
+        </p>
+      </div>
+    </div>
+  </form>
+</div>
+{% endblock %}
