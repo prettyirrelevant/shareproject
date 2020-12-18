@@ -1,7 +1,7 @@
 {% extends 'layout.html' %} {% block head %}
 <title>{{ title }}|ShareProject</title>
 {% endblock %} {% block body %}
-<div class="container is-fluid go-down">
+<div class="container is-fluid" style="margin-top: 80px">
   <form class="box" action="{{ url_for('user.login') }}" method="post">
     <h1 class="has-text-centered"><strong>LOGIN SHAREPROJECT</strong></h1>
     {{ form.csrf_token }}
