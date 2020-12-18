@@ -1,7 +1,7 @@
 {% extends 'layout.html' %} {% block head %}
 <title>{{ title }}|ShareProject</title>
 {% endblock %} {% block body %}
-<div class="container is-fluid">
+<div class="container is-fluid go-down">
   <form class="box" action="{{ url_for('user.login') }}" method="post">
     <h1 class="has-text-centered"><strong>LOGIN SHAREPROJECT</strong></h1>
     {{ form.csrf_token }}
@@ -55,7 +55,7 @@
         </div>
         <p>
           <span><i class="fas fa-arrow-right"></i></span> Don't have an account?
-          <a href="{{ url_for('user.register') }}">Login</a>
+          <a href="{{ url_for('user.register') }}">Register</a>
         </p>
       </div>
     </div>

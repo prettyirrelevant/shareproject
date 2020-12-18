@@ -1,135 +1,194 @@
 <!DOCTYPE html>
 <html lang="en" class="has-navbar-fixed-top">
-<head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="apple-touch-icon" sizes="180x180" href="{{ url_for('static', filename='assets/favicon/apple-touch-icon.png') }}">
-    <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='assets/favicon/favicon-32x32.png') }}">
-    <link rel="icon" type="image/png" sizes="16x16" href="{{ url_for('static', filename='assets/favicon/favicon-16x16.png') }}">
-    <link rel="manifest" href="{{ url_for('static', filename='assets/favicon/site.webmanifest') }}">
-    <link href="https://fonts.googleapis.com/css2?family=Muli:wght@300;700&family=Quicksand:wght@400;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="{{url_for('static', filename='assets/css/bulma.min.css')}}">
-    <script src="https://kit.fontawesome.com/1d3580dc80.js" crossorigin="anonymous"></script>
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link
+      rel="apple-touch-icon"
+      sizes="180x180"
+      href="{{ url_for('static', filename='assets/favicon/apple-touch-icon.png') }}"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="32x32"
+      href="{{ url_for('static', filename='assets/favicon/favicon-32x32.png') }}"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="16x16"
+      href="{{ url_for('static', filename='assets/favicon/favicon-16x16.png') }}"
+    />
+    <link
+      rel="manifest"
+      href="{{ url_for('static', filename='assets/favicon/site.webmanifest') }}"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Muli:wght@300;700&family=Quicksand:wght@400;600&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="{{url_for('static', filename='assets/css/bulma.min.css')}}"
+    />
+    <script
+      src="https://kit.fontawesome.com/df59ab4ff4.js"
+      crossorigin="anonymous"
+    ></script>
     <style>
-        body{
-            font-family: Quicksand, sans-serif;
-        }
+      body {
+        font-family: Quicksand, sans-serif;
+      }
 
-        .logo-first{
-            font-size: 1.2em;
-            color: #00e7eb;
-            letter-spacing: .01em;
-        }
-        .logo-second{
-            font-size: 1.3em;
-            color: white;
-            letter-spacing: .01em;
-            margin-left: 1px;
-        }
-        .notification{
-            margin-top: 15px;
-        }
-        .go-down{
-            margin-top: 20px;
-        }
+      .logo-first {
+        font-size: 1.2em;
+        color: #00e7eb;
+        letter-spacing: 0.01em;
+      }
+      .logo-second {
+        font-size: 1.3em;
+        color: white;
+        letter-spacing: 0.01em;
+        margin-left: 1px;
+      }
+      .notification {
+        margin-top: 15px;
+      }
+      .go-down {
+        margin-top: 20px;
+      }
     </style>
-    {% block head %}
-    {% endblock %}
-</head>
-<body>
-    <nav class="navbar is-black is-fixed-top" role="navigation" aria-label="main navigation">
-        <div class="container">
-            <div class="navbar-brand">
-                <a class="navbar-item" href="{{ url_for('main.index') }}">
-                    <span class="logo-first">share</span><span class="logo-second">Project</span>
-                </a>
-                <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample">
-                    <span aria-hidden="true"></span>
-                    <span aria-hidden="true"></span>
-                    <span aria-hidden="true"></span>
-                </a>
-            </div>
+    {% block head %} {% endblock %}
+  </head>
+  <body>
+    <nav
+      class="navbar is-black is-fixed-top"
+      role="navigation"
+      aria-label="main navigation"
+    >
+      <div class="container">
+        <div class="navbar-brand">
+          <a class="navbar-item" href="{{ url_for('main.index') }}">
+            <span class="logo-first">share</span
+            ><span class="logo-second">Project</span>
+          </a>
+          <a
+            role="button"
+            class="navbar-burger burger"
+            aria-label="menu"
+            aria-expanded="false"
+            data-target="navbarBasicExample"
+          >
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+          </a>
+        </div>
 
-            <div id="navbarBasicExample" class="navbar-menu">
-            <div class="navbar-end">
-                {% if g.search_form %}
-                <form class="navbar-item" action="{{ url_for('project.search') }}" method="get">
-                    <div class="field has-addons">
-                        <div class="control">
-                            {{ g.search_form.q(class_='input', placeholder=g.search_form.q.label.text) }}
-                        </div>
-                        <div class="control">
-                            <button class="button is-warning">
-                                Search
-                            </button>
-                        </div>
-                    </div>
-                </form>
-                {% endif %}
-                {% if current_user.is_authenticated %}
-                    <div class="navbar-item">
-                        <a class="button is-info is-outlined" href="{{ url_for('user.profile', username=current_user.username) }}">
-                            <strong>Profile</strong>
-                        </a>
-                    </div>
-                    <div class="navbar-item">
-                        <a class="button is-danger is-outlined" href="{{ url_for('user.logout') }}">
-                            <strong>Log Out</strong>
-                        </a>
-                    </div>
-                {% else %}
-                    <div class="navbar-item">
-                        <a class="button is-dark is-outlined" href="{{ url_for('user.login') }}">
-                            <strong>Log In</strong>
-                        </a>
-                    </div>
-                    <div class="navbar-item">
-                        <a class="button is-success is-outlined" href="{{ url_for('user.register') }}">
-                            <strong>Sign Up</strong>
-                        </a>
-                    </div>
-                {% endif %}
+        <div id="navbarBasicExample" class="navbar-menu">
+          <div class="navbar-end">
+            {% if g.search_form %}
+            <form
+              class="navbar-item"
+              action="{{ url_for('project.search') }}"
+              method="get"
+            >
+              <div class="field has-addons">
+                <div class="control">
+                  {{ g.search_form.q(class_='input',
+                  placeholder=g.search_form.q.label.text) }}
+                </div>
+                <div class="control">
+                  <button class="button is-warning">Search</button>
+                </div>
+              </div>
+            </form>
+            {% endif %} {% if current_user.is_authenticated %}
+            <div class="navbar-item">
+              <a
+                class="button is-info is-outlined"
+                href="{{ url_for('user.profile', username=current_user.username) }}"
+              >
+                <strong>Profile</strong>
+              </a>
             </div>
+            <div class="navbar-item">
+              <a
+                class="button is-danger is-outlined"
+                href="{{ url_for('user.logout') }}"
+              >
+                <strong>Log Out</strong>
+              </a>
+            </div>
+            {% else %}
+            <div class="navbar-item">
+              <a
+                class="button is-dark is-outlined"
+                href="{{ url_for('user.login') }}"
+              >
+                <strong>Log In</strong>
+              </a>
+            </div>
+            <div class="navbar-item">
+              <a
+                class="button is-success is-outlined"
+                href="{{ url_for('user.register') }}"
+              >
+                <strong>Sign Up</strong>
+              </a>
+            </div>
+            {% endif %}
+          </div>
         </div>
-        </div>
+      </div>
     </nav>
-    {% with messages = get_flashed_messages(with_categories=true) %}
-        {% if messages %}
-                {% for category, message in messages %}
-                    <div class="container is-fluid">
-                        <div class="notification is-{{ category }} ">
-                            <button class="delete"></button>
-                            {{ message }}
-                    </div>
-                    </div>
-                {% endfor %}
-        {% endif %}
-    {% endwith %}
+    {% with messages = get_flashed_messages(with_categories=true) %} {% if
+    messages %} {% for category, message in messages %}
+    <div class="container is-fluid">
+      <div class="notification is-{{ category }} ">
+        <button class="delete"></button>
+        {{ message }}
+      </div>
+    </div>
+    {% endfor %} {% endif %} {% endwith %}
     <script src="{{url_for('static', filename='assets/js/jquery-3.5.1.min.js')}}"></script>
     <script>
-        $(document).ready(function() {
-            // Check for click events on the navbar burger icon
-            $(".navbar-burger").click(function() {
-                // Toggle the "is-active" class on both the "navbar-burger" and the "navbar-menu"
-                $(".navbar-burger").toggleClass("is-active");
-                $(".navbar-menu").toggleClass("is-active");
-            });
+      $(document).ready(function () {
+        // Check for click events on the navbar burger icon
+        $(".navbar-burger").click(function () {
+          // Toggle the "is-active" class on both the "navbar-burger" and the "navbar-menu"
+          $(".navbar-burger").toggleClass("is-active");
+          $(".navbar-menu").toggleClass("is-active");
         });
-        document.addEventListener('DOMContentLoaded', () => {
-            (document.querySelectorAll('.notification .delete') || []).forEach(($delete) => {
-                let $notification = $delete.parentNode;
-                $delete.addEventListener('click', () => {
-                    $notification.parentNode.removeChild($notification);
-                });
+      });
+      document.addEventListener("DOMContentLoaded", () => {
+        (document.querySelectorAll(".notification .delete") || []).forEach(
+          $delete => {
+            let $notification = $delete.parentNode;
+            $delete.addEventListener("click", () => {
+              $notification.parentNode.removeChild($notification);
             });
-        });
+          }
+        );
+      });
     </script>
-    <script src="{{url_for('static', filename='ace/ace.js')}}" type="text/javascript" charset="utf-8"></script>
-    <script src="{{url_for('static', filename='ace/ext-modelist.js')}}" type="text/javascript" charset="utf-8"></script>
-    <script src="{{url_for('static', filename='ace/ext-language_tools.js')}}" type="text/javascript" charset="utf-8"></script>
-    <div class="go-down">
-        {% block body %}
-        {% endblock %}
-    </div>
-</body>
+    <script
+      src="{{url_for('static', filename='ace/ace.js')}}"
+      type="text/javascript"
+      charset="utf-8"
+    ></script>
+    <script
+      src="{{url_for('static', filename='ace/ext-modelist.js')}}"
+      type="text/javascript"
+      charset="utf-8"
+    ></script>
+    <script
+      src="{{url_for('static', filename='ace/ext-language_tools.js')}}"
+      type="text/javascript"
+      charset="utf-8"
+    ></script>
+    <div class="go-down">{% block body %} {% endblock %}</div>
+  </body>
+</html>
