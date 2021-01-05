@@ -13,10 +13,6 @@ load_dotenv(os.path.join(basedir, ".env"))
 
 
 class Config:
-    FLASK_APP = os.environ.get("FLASK_APP")
-    FLASK_ENV = os.environ.get("FLASK_ENV")
-    SECRET_KEY = os.environ.get("SECRET_KEY")
-
     # FLASKSQLALCHEMY
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SQLALCHEMY_DATABASE_URI = "sqlite:///shareproject.db"
