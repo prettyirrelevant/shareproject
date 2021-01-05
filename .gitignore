@@ -1,6 +1,4 @@
-migrations/
 venv/
-.venv
 .idea
 **/__pycache__/**
 .env
