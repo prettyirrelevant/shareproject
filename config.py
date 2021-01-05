@@ -13,7 +13,7 @@ load_dotenv(os.path.join(basedir, ".env"))
 
 
 class Config:
-    # FLASKSQLALCHEMY
+    SECRET_KEY = "E+W4trE/JZ5pRupZEaSe/lUJ0Rh7MlqJxHZVzZF65HM="
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SQLALCHEMY_DATABASE_URI = "sqlite:///shareproject.db"
 
@@ -33,4 +33,5 @@ class Config:
 class ProdConfig(Config):
     DEBUG = False
     ENV = "production"
+    SECRET_KEY = os.environ.get("SECRET_KEY")
     SQLALCHEMY_DATABASE_URI = os.environ.get("DATABASE_URL")
